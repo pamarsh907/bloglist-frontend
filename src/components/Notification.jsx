@@ -1,7 +1,7 @@
 const Notification = ({ message }) => (
-  <div style={{color: "green"}}>
+  <div style={{ color: 'green' }}>
     {message}
-  </div>  
+  </div>
 )
 
 export default Notification

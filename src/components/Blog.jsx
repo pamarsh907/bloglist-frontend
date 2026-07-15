@@ -46,9 +46,9 @@ const Blog = ({ blog, updateLikes, remove, canRemove }) => {
         <div>{blog.user?.username}</div>
 
         {canRemove && <button onClick={remove}>remove</button>}
-        </>
+      </>
       }
-      <button onClick={toggleVisibility}>{showDetails ? 'hide' : 'view'}</button> 
+      <button onClick={toggleVisibility}>{showDetails ? 'hide' : 'view'}</button>
     </div>
   )
 }

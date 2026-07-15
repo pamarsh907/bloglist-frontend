@@ -12,14 +12,14 @@ const App = () => {
   const [blogs, setBlogs] = useState([])
   const [errorMessage, setErrorMessage] = useState(null)
   const [notification, setNotification] = useState(null)
-  const [user, setUser] = useState(null) 
+  const [user, setUser] = useState(null)
 
   const sortedBlogs = blogs.sort((a,b) => b.likes - a.likes)
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
       setBlogs( blogs )
-    )  
+    )
   }, [])
 
   useEffect(() => {
@@ -37,7 +37,7 @@ const App = () => {
 
       window.localStorage.setItem(
         'loggedBlogappUser', JSON.stringify(user)
-      ) 
+      )
       blogService.setToken(user.token)
       setUser(user)
       setNotification(`${username} logged in`)
@@ -54,7 +54,6 @@ const App = () => {
 
   const handleLogout = () => {
     console.log('logout')
-    
     window.localStorage.removeItem('loggedBlogappUser')
     setUser(null)
   }
@@ -81,7 +80,7 @@ const App = () => {
   }
 
   const handleUpdateLikes = (id) => {
-    const updatedBlogs = blogs.map(blog => blog.id === id ? {...blog, likes: blog.likes + 1} : blog)
+    const updatedBlogs = blogs.map(blog => blog.id === id ? { ...blog, likes: blog.likes + 1 } : blog)
     setBlogs(updatedBlogs)
   }
 
@@ -96,13 +95,12 @@ const App = () => {
           setErrorMessage(null)
         }, 5000)
       }
-  
       setNotification(`Deleted blog: ${blog.title}`)
       setTimeout(() => {
         setNotification(null)
       }, 5000)
       setBlogs(blogs.filter(blog => blog.id !== id))
-    } 
+    }
   }
 
   const loginForm = () => (
@@ -114,7 +112,7 @@ const App = () => {
   const blogForm = () => (
     <Togglable buttonLabel='Add Blog'>
       <BlogForm createBlog={handleBlogCreation}/>
-    </Togglable>  
+    </Togglable>
   )
 
   const logoutForm = () => (
@@ -129,15 +127,15 @@ const App = () => {
       {!user && loginForm()}
       {user && logoutForm()}
       {user && blogForm()}
-      {user && sortedBlogs.map(blog => 
-      <Blog 
-        key={blog.id} 
-        blog={blog} 
-        updateLikes={() => handleUpdateLikes(blog.id)}
-        remove={() => handleOnRemove(blog.id)}
-        canRemove={blog.user.id === user.id}
-      />
-    )}
+      {user && sortedBlogs.map(blog =>
+        <Blog
+          key={blog.id}
+          blog={blog}
+          updateLikes={() => handleUpdateLikes(blog.id)}
+          remove={() => handleOnRemove(blog.id)}
+          canRemove={blog.user.id === user.id}
+        />
+      )}
     </div>
   )
 }

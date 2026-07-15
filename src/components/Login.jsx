@@ -1,22 +1,22 @@
-import { useState} from 'react'
+import { useState } from 'react'
 
-const LoginForm = ({login}) => {
-    const [username, setUsername] = useState('')
-    const [password, setPassword] = useState('')
+const LoginForm = ({ login }) => {
+  const [username, setUsername] = useState('')
+  const [password, setPassword] = useState('')
 
-    const handleLogin = (event) => {
-        event.preventDefault()
-        try{       
-            login(username, password)
-        } catch(error) {
-            console.log('error :', error)
-        }
-
-        setUsername('')
-        setPassword('')
+  const handleLogin = (event) => {
+    event.preventDefault()
+    try{
+      login(username, password)
+    } catch(error) {
+      console.log('error :', error)
     }
 
-    return (
+    setUsername('')
+    setPassword('')
+  }
+
+  return (
     <>
       <h2>Login Form</h2>
       <form onSubmit={handleLogin}>

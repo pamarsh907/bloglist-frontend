@@ -1,7 +1,7 @@
 const Error = ({ message }) => (
-  <div style={{color: "red"}}>
+  <div style={{ color: 'red' }}>
     {message}
-  </div>  
+  </div>
 )
 
 export default Error
