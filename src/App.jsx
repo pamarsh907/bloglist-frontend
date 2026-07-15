@@ -86,23 +86,23 @@ const App = () => {
   }
 
   const handleOnRemove = async (id) => {
-    try {
-      await blogService.remove(id)
-    } catch {
-      setErrorMessage('failed to delete blog')
-      setTimeout(() => {
-        setErrorMessage(null)
-      }, 5000)
-    }
-    console.log('blogs :', blogs)
     const blog = blogs.find(blog => blog.id === id)
-    console.log('blog :', blog)
-    setNotification(`Deleted blog: ${blog.title}`)
-    setTimeout(() => {
-      setNotification(null)
-    }, 5000)
-    setBlogs(blogs.filter(blog => blog.id !== id))
-
+    if (window.confirm(`do you really want to delete ${blog.title}`)){
+      try {
+        await blogService.remove(id)
+      } catch {
+        setErrorMessage('failed to delete blog')
+        setTimeout(() => {
+          setErrorMessage(null)
+        }, 5000)
+      }
+  
+      setNotification(`Deleted blog: ${blog.title}`)
+      setTimeout(() => {
+        setNotification(null)
+      }, 5000)
+      setBlogs(blogs.filter(blog => blog.id !== id))
+    } 
   }
 
   const loginForm = () => (
@@ -135,6 +135,7 @@ const App = () => {
         blog={blog} 
         updateLikes={() => handleUpdateLikes(blog.id)}
         remove={() => handleOnRemove(blog.id)}
+        canRemove={blog.user.id === user.id}
       />
     )}
     </div>
