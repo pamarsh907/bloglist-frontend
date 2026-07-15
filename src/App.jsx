@@ -90,15 +90,20 @@ const App = () => {
     </Togglable>  
   )
 
+  const logoutForm = () => (
+    <div><span>{user.username} is logged in</span><button onClick={handleLogout}>logout</button></div>
+  )
+
   return (
     <div>
       <h1>BLOGS APP</h1>
       <Error message={errorMessage} />
       <Notification message={notification} />
       {!user && loginForm()}
+      {user && logoutForm()}
       {user && blogForm()}
       {user && blogs.map(blog => <Blog blog={blog}/>)}
-      {user && <button onClick={handleLogout}>logout</button>}
+
     </div>
   )
 }
