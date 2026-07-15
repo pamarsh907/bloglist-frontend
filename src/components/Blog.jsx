@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import blogService from '../services/blogs'
 
-const Blog = ({ blog, updateLikes }) => {
+const Blog = ({ blog, updateLikes, remove }) => {
   const [showDetails, setShowDetails] = useState(false)
   const [likes, setLikes] = useState(blog.likes)
 
@@ -44,6 +44,7 @@ const Blog = ({ blog, updateLikes }) => {
         <div>{blog.url}</div>
         <div>likes: {likes}<button onClick={manageAddLike}>like</button></div>
         <div>{blog.user?.username}</div>
+        <button onClick={remove}>remove</button>
         </>
       }
       <button onClick={toggleVisibility}>{showDetails ? 'hide' : 'view'}</button> 
