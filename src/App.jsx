@@ -14,6 +14,8 @@ const App = () => {
   const [notification, setNotification] = useState(null)
   const [user, setUser] = useState(null) 
 
+  const sortedBlogs = blogs.sort((a,b) => b.likes - a.likes)
+
   useEffect(() => {
     blogService.getAll().then(blogs =>
       setBlogs( blogs )
@@ -78,6 +80,11 @@ const App = () => {
     }
   }
 
+  const handleUpdateLikes = (id) => {
+    const updatedBlogs = blogs.map(blog => blog.id === id ? {...blog, likes: blog.likes + 1} : blog)
+    setBlogs(updatedBlogs)
+  }
+
   const loginForm = () => (
     <Togglable buttonLabel='Login'>
       <Login login={handleLogin}/>
@@ -102,7 +109,7 @@ const App = () => {
       {!user && loginForm()}
       {user && logoutForm()}
       {user && blogForm()}
-      {user && blogs.map(blog => <Blog key={blog.id} blog={blog}/>)}
+      {user && sortedBlogs.map(blog => <Blog key={blog.id} blog={blog} updateLikes={() => handleUpdateLikes(blog.id)}/>)}
 
     </div>
   )
