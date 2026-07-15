@@ -38,7 +38,6 @@ const App = () => {
       ) 
       blogService.setToken(user.token)
       setUser(user)
-      console.log('user :', user)
       setNotification(`${username} logged in`)
       setTimeout(() => {
         setNotification(null)
@@ -63,7 +62,8 @@ const App = () => {
       const newBlog = await blogService.create({
         title: title,
         author: author,
-        url: url
+        url: url,
+        user: user.id
       })
       setBlogs(blogs.concat(newBlog))
       setNotification(`Added new blog: ${newBlog.title} by ${author}`)
@@ -102,7 +102,7 @@ const App = () => {
       {!user && loginForm()}
       {user && logoutForm()}
       {user && blogForm()}
-      {user && blogs.map(blog => <Blog blog={blog}/>)}
+      {user && blogs.map(blog => <Blog key={blog.id} blog={blog}/>)}
 
     </div>
   )

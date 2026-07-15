@@ -1,7 +1,9 @@
 import { useState } from 'react'
+import blogService from '../services/blogs'
 
 const Blog = ({ blog }) => {
   const [showDetails, setShowDetails] = useState(false)
+  const [likes, setLikes] = useState(blog.likes)
 
   const blogStyle = {
     paddingTop: 10,
@@ -15,12 +17,30 @@ const Blog = ({ blog }) => {
     setShowDetails(!showDetails)
   }
 
+  const manageAddLike = () => {
+    const newBlog = {
+      user: blog.user.id,
+      likes: likes + 1,
+      author: blog.author,
+      title: blog.title,
+      url: blog.url
+    }
+
+    try {
+      blogService.update(blog.id, newBlog)
+    } catch(error) {
+      console.log('error adding likes:', error)
+    }
+    console.log('setting likes')
+    setLikes(likes + 1)
+  }
+
   return (
     <div style={blogStyle}>
       <div>{blog.title} : {blog.author}</div>
       {showDetails && <>
         <div>{blog.url}</div>
-        <div>likes: {blog.likes}<button>like</button></div>
+        <div>likes: {likes}<button onClick={manageAddLike}>like</button></div>
         <div>{blog.user?.username}</div>
         </>
       }
