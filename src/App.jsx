@@ -14,6 +14,7 @@ const App = () => {
   const [notification, setNotification] = useState(null)
   const [user, setUser] = useState(null)
 
+  console.log('blogs :', blogs)
   const sortedBlogs = blogs.sort((a,b) => b.likes - a.likes)
 
   useEffect(() => {
@@ -82,6 +83,24 @@ const App = () => {
   const handleUpdateLikes = (id) => {
     const updatedBlogs = blogs.map(blog => blog.id === id ? { ...blog, likes: blog.likes + 1 } : blog)
     setBlogs(updatedBlogs)
+
+    const updatedBlog = updatedBlogs.find(blog => blog.id === id)
+
+    const processed = {
+      title: updatedBlog.title,
+      author: updatedBlog.author,
+      id: updatedBlog.id,
+      likes: updatedBlog.likes,
+      url: updatedBlog.url,
+      user: updatedBlog.user.id
+    }
+    console.log('processed :', processed)
+
+    try {
+      blogService.update(id, processed)
+    } catch(error) {
+      console.log('error adding likes:', error)
+    }
   }
 
   const handleOnRemove = async (id) => {

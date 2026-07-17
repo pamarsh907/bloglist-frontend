@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import blogService from '../services/blogs'
 
 const Blog = ({ blog, updateLikes, remove, canRemove }) => {
   const [showDetails, setShowDetails] = useState(false)
@@ -18,23 +17,8 @@ const Blog = ({ blog, updateLikes, remove, canRemove }) => {
   }
 
   const manageAddLike = () => {
-    const newBlog = {
-      user: blog.user.id,
-      likes: likes + 1,
-      author: blog.author,
-      title: blog.title,
-      url: blog.url
-    }
-
-    try {
-      blogService.update(blog.id, newBlog)
-    } catch(error) {
-      console.log('error adding likes:', error)
-    }
-    console.log('setting likes')
     setLikes(likes + 1)
-
-    updateLikes()
+    updateLikes(blog.id)
   }
 
   return (
