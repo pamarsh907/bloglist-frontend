@@ -23,16 +23,16 @@ const Blog = ({ blog, updateLikes, remove, canRemove }) => {
 
   return (
     <div style={blogStyle}>
-      <div>{blog.title} : {blog.author}</div>
+      <div className='blogTitle'>{blog.title} : {blog.author}</div>
       {showDetails && <>
         <div>{blog.url}</div>
-        <div>likes: {likes}<button onClick={manageAddLike}>like</button></div>
+        <div className='likes'>likes: {likes}<button className='likeButton' onClick={manageAddLike}>like</button></div>
         <div>{blog.user?.username}</div>
 
         {canRemove && <button onClick={remove}>remove</button>}
       </>
       }
-      <button onClick={toggleVisibility}>{showDetails ? 'hide' : 'view'}</button>
+      <button className='toggleViewButton' onClick={toggleVisibility}>{showDetails ? 'hide' : 'view'}</button>
     </div>
   )
 }

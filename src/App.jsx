@@ -4,9 +4,14 @@ import Notification from './components/Notification'
 import Error from './components/Error'
 import Togglable from './components/Togglable'
 import Login from './components/Login'
+import Logout from './components/Logout'
 import BlogForm from './components/BlogForm'
 import blogService from './services/blogs'
 import loginService from './services/login'
+import {
+  BrowserRouter as Router,
+  Routes, Route, Link
+} from 'react-router-dom'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
@@ -14,7 +19,6 @@ const App = () => {
   const [notification, setNotification] = useState(null)
   const [user, setUser] = useState(null)
 
-  console.log('blogs :', blogs)
   const sortedBlogs = blogs.sort((a,b) => b.likes - a.likes)
 
   useEffect(() => {
@@ -94,7 +98,6 @@ const App = () => {
       url: updatedBlog.url,
       user: updatedBlog.user.id
     }
-    console.log('processed :', processed)
 
     try {
       blogService.update(id, processed)
@@ -123,9 +126,11 @@ const App = () => {
   }
 
   const loginForm = () => (
-    <Togglable buttonLabel='Login'>
-      <Login login={handleLogin}/>
-    </Togglable>
+    // <Togglable buttonLabel='Login'>
+    //   <Login login={handleLogin}/>
+    // </Togglable>
+
+    <Login login={handleLogin}/>
   )
 
   const blogForm = () => (
@@ -134,28 +139,47 @@ const App = () => {
     </Togglable>
   )
 
-  const logoutForm = () => (
-    <div><span>{user.username} is logged in</span><button onClick={handleLogout}>logout</button></div>
-  )
+  const UserInfo = () => {
+    // <div><span>{user.username} is logged in</span><button onClick={handleLogout}>logout</button></div>
+    return user && <div><span>{user.username} is logged in</span></div>
+  }
+
+  const padding = {
+    padding: 5
+  }
+
+
 
   return (
-    <div>
+    <Router>
+      <div>
+        <Link style={padding} to='/'>blogs</Link>
+        {!user &&<Link style={padding} to='/login'>login</Link>}
+        {user && <Logout logout={handleLogout}/>}
+      </div>
+      <UserInfo/>
       <h1>BLOGS APP</h1>
       <Error message={errorMessage} />
       <Notification message={notification} />
-      {!user && loginForm()}
-      {user && logoutForm()}
-      {user && blogForm()}
-      {user && sortedBlogs.map(blog =>
-        <Blog
-          key={blog.id}
-          blog={blog}
-          updateLikes={() => handleUpdateLikes(blog.id)}
-          remove={() => handleOnRemove(blog.id)}
-          canRemove={blog.user.id === user.id}
-        />
-      )}
-    </div>
+      <Routes>
+        <Route path='/login' element={
+          loginForm()
+        } />
+        <Route path='/' element={
+          <div className='blogsList'>
+            {user && sortedBlogs.map(blog =>
+              <Blog
+                key={blog.id}
+                blog={blog}
+                updateLikes={() => handleUpdateLikes(blog.id)}
+                remove={() => handleOnRemove(blog.id)}
+                canRemove={blog.user.id === user.id}
+              />
+            )}
+          </div>
+        } />
+      </Routes>
+    </Router>
   )
 }
 

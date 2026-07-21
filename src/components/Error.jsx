@@ -1,5 +1,5 @@
 const Error = ({ message }) => (
-  <div style={{ color: 'red' }}>
+  <div className='error' style={{ color: 'red' }}>
     {message}
   </div>
 )
