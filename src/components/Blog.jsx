@@ -1,8 +1,11 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 const Blog = ({ blog, updateLikes, remove, canRemove, canLike }) => {
   const [showDetails, setShowDetails] = useState(false)
   const [likes, setLikes] = useState(blog.likes)
+
+  const navigate = useNavigate()
 
   const blogStyle = {
     paddingTop: 10,
@@ -27,6 +30,11 @@ const Blog = ({ blog, updateLikes, remove, canRemove, canLike }) => {
     }
   }
 
+  const handleRemove = () => {
+    remove()
+    navigate('/')
+  }
+
   if(!blog) {
     return null
   }
@@ -39,7 +47,7 @@ const Blog = ({ blog, updateLikes, remove, canRemove, canLike }) => {
         <div className='likes'>likes: {likes}{canLike && <button className='likeButton' onClick={manageAddLike}>like</button>}</div>
         <div>{blog.user?.username}</div>
 
-        {canRemove && <button onClick={remove}>remove</button>}
+        {canRemove && <button onClick={handleRemove}>remove</button>}
       </>
       }
       <button className='toggleViewButton' onClick={toggleVisibility}>{showDetails ? 'hide' : 'view'}</button>
