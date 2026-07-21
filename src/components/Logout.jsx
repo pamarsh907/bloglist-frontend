@@ -5,6 +5,7 @@ const LogoutForm = ({ logout }) => {
   const navigate = useNavigate()
 
   const handleLogout = () => {
+    console.log('calling logout')
     logout()
     navigate('/')
   }

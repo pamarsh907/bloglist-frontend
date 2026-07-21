@@ -5,12 +5,13 @@ import Error from './components/Error'
 import Togglable from './components/Togglable'
 import Login from './components/Login'
 import Logout from './components/Logout'
+import BlogsList from './components/BlogsList'
 import BlogForm from './components/BlogForm'
 import blogService from './services/blogs'
 import loginService from './services/login'
 import {
   BrowserRouter as Router,
-  Routes, Route, Link
+  Routes, Route, Link, useMatch
 } from 'react-router-dom'
 
 const App = () => {
@@ -20,6 +21,11 @@ const App = () => {
   const [user, setUser] = useState(null)
 
   const sortedBlogs = blogs.sort((a,b) => b.likes - a.likes)
+
+  const match = useMatch('/blogs/:id')
+  const blog = match
+    ? blogs.find(blog => blog.id === match.params.id)
+    : null
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
@@ -61,6 +67,7 @@ const App = () => {
     console.log('logout')
     window.localStorage.removeItem('loggedBlogappUser')
     setUser(null)
+    // setBlogs([])
   }
 
   const handleBlogCreation = async (title, author, url) => {
@@ -84,9 +91,8 @@ const App = () => {
     }
   }
 
-  const handleUpdateLikes = (id) => {
+  const handleUpdateLikes = async (id) => {
     const updatedBlogs = blogs.map(blog => blog.id === id ? { ...blog, likes: blog.likes + 1 } : blog)
-    setBlogs(updatedBlogs)
 
     const updatedBlog = updatedBlogs.find(blog => blog.id === id)
 
@@ -99,11 +105,8 @@ const App = () => {
       user: updatedBlog.user.id
     }
 
-    try {
-      blogService.update(id, processed)
-    } catch(error) {
-      console.log('error adding likes:', error)
-    }
+    await blogService.update(id, processed)
+    // setBlogs(updatedBlogs)
   }
 
   const handleOnRemove = async (id) => {
@@ -151,10 +154,11 @@ const App = () => {
 
 
   return (
-    <Router>
+    <>
       <div>
         <Link style={padding} to='/'>blogs</Link>
         {!user &&<Link style={padding} to='/login'>login</Link>}
+        {user && <Link style={padding} to='blogs/create'>create</Link>}
         {user && <Logout logout={handleLogout}/>}
       </div>
       <UserInfo/>
@@ -167,19 +171,23 @@ const App = () => {
         } />
         <Route path='/' element={
           <div className='blogsList'>
-            {user && sortedBlogs.map(blog =>
-              <Blog
-                key={blog.id}
-                blog={blog}
-                updateLikes={() => handleUpdateLikes(blog.id)}
-                remove={() => handleOnRemove(blog.id)}
-                canRemove={blog.user.id === user.id}
-              />
-            )}
+            <BlogsList blogs={sortedBlogs}/>
           </div>
         } />
+        <Route path='/blogs/:id'element={
+          <Blog
+            blog={blog}
+            updateLikes={() => handleUpdateLikes(blog?.id)}
+            remove={() => handleOnRemove(blog?.id)}
+            canRemove={blog?.user?.id === user?.id}
+            canLike={user}
+          />
+        }/>
+        <Route path='/blogs/create' element={
+          <BlogForm createBlog={handleBlogCreation}/>
+        }/>
       </Routes>
-    </Router>
+    </>
   )
 }
 

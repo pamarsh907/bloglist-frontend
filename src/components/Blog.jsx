@@ -1,6 +1,6 @@
 import { useState } from 'react'
 
-const Blog = ({ blog, updateLikes, remove, canRemove }) => {
+const Blog = ({ blog, updateLikes, remove, canRemove, canLike }) => {
   const [showDetails, setShowDetails] = useState(false)
   const [likes, setLikes] = useState(blog.likes)
 
@@ -16,9 +16,19 @@ const Blog = ({ blog, updateLikes, remove, canRemove }) => {
     setShowDetails(!showDetails)
   }
 
-  const manageAddLike = () => {
-    setLikes(likes + 1)
-    updateLikes(blog.id)
+  const manageAddLike = async () => {
+    console.log('manage add likes')
+    try {
+      await updateLikes(blog.id)
+      setLikes(likes + 1)
+    }
+    catch(error) {
+      console.log('error adding like: ', error)
+    }
+  }
+
+  if(!blog) {
+    return null
   }
 
   return (
@@ -26,7 +36,7 @@ const Blog = ({ blog, updateLikes, remove, canRemove }) => {
       <div className='blogTitle'>{blog.title} : {blog.author}</div>
       {showDetails && <>
         <div>{blog.url}</div>
-        <div className='likes'>likes: {likes}<button className='likeButton' onClick={manageAddLike}>like</button></div>
+        <div className='likes'>likes: {likes}{canLike && <button className='likeButton' onClick={manageAddLike}>like</button>}</div>
         <div>{blog.user?.username}</div>
 
         {canRemove && <button onClick={remove}>remove</button>}
