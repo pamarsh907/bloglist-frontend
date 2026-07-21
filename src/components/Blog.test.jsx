@@ -2,6 +2,10 @@ import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import Blog from './Blog'
 
+vi.mock('react-router-dom', () => ({
+  useNavigate: () => vi.fn(),
+}))
+
 describe('<Blog />', () => {
   beforeEach(() => {
 
@@ -70,7 +74,7 @@ describe('<Blog />', () => {
     const mockHandler = vi.fn()
 
     render(
-      <Blog blog={blog} updateLikes={mockHandler}/>
+      <Blog blog={blog} updateLikes={mockHandler} canLike={true}/>
     )
 
     const user = userEvent.setup()
@@ -83,5 +87,77 @@ describe('<Blog />', () => {
     await user.click(likeButton)
 
     expect(mockHandler.mock.calls).toHaveLength(2)
+  })
+
+  test('unauthenticated user cannot see like or delete', async () => {
+    const blog = {
+      title: 'title',
+      author: 'author',
+      url: 'url.com',
+      likes: '99',
+      user : 'user'
+    }
+
+    const mockHandler = vi.fn()
+
+    render(
+      <Blog blog={blog} updateLikes={mockHandler} remove={ () => {} } canRemove={false} canLike={false}/>
+    )
+
+    const user = userEvent.setup()
+
+    const viewButton = screen.getByText('view')
+    await user.click(viewButton)
+
+    expect(screen.queryByText('like')).toBeNull()
+    expect(screen.queryByText('remove')).toBeNull()
+  })
+
+  test('unauthenticed user can see like and delete own blog', async () => {
+    const blog = {
+      title: 'title',
+      author: 'author',
+      url: 'url.com',
+      likes: '99',
+      user : 'user'
+    }
+
+    const mockHandler = vi.fn()
+
+    render(
+      <Blog blog={blog} updateLikes={mockHandler} remove={ () => {} } canRemove={true} canLike={true}/>
+    )
+
+    const user = userEvent.setup()
+
+    const viewButton = screen.getByText('view')
+    await user.click(viewButton)
+
+    expect(screen.getByText('like')).toBeDefined()
+    expect(screen.getByText('remove')).toBeDefined()
+  })
+
+  test('unauthenticed user can see like but no delete other blogs', async () => {
+    const blog = {
+      title: 'title',
+      author: 'author',
+      url: 'url.com',
+      likes: '99',
+      user : 'user'
+    }
+
+    const mockHandler = vi.fn()
+
+    render(
+      <Blog blog={blog} updateLikes={mockHandler} remove={ () => {} } canRemove={false} canLike={true}/>
+    )
+
+    const user = userEvent.setup()
+
+    const viewButton = screen.getByText('view')
+    await user.click(viewButton)
+
+    expect(screen.queryByText('like')).toBeDefined()
+    expect(screen.queryByText('remove')).toBeNull()
   })
 })
